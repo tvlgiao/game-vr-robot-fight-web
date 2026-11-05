@@ -43,6 +43,8 @@
       </svg>
     </button>
 
+    <a id="rf-credits" class="rf-credits" href="credits.html">Ghi công</a>
+
     <script>
       (function () {
         var MAX_DPR = 2;
@@ -67,6 +69,7 @@
             reload: "Tải lại trang", touchTitle: "Trò chơi cần bàn phím hoặc tay cầm",
             touchText: "Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.",
             touchContinue: "Vẫn tiếp tục", fullscreen: "Toàn màn hình",
+            credits: "Ghi công",
             fileFailed: "Không tải được tệp ", loaderBroken: "Tệp tải trò chơi bị hỏng."
           },
           en: {
@@ -75,6 +78,7 @@
             reload: "Reload page", touchTitle: "The game needs a keyboard or a gamepad",
             touchText: "A touch screen cannot control the fighter. Play on a computer with a keyboard, or connect a gamepad.",
             touchContinue: "Continue anyway", fullscreen: "Fullscreen",
+            credits: "Credits",
             fileFailed: "Could not load the file ", loaderBroken: "The game loader file is corrupted."
           }
         };
@@ -105,6 +109,7 @@
         setText("rf-touch-continue", T.touchContinue);
         fullscreen.setAttribute("aria-label", T.fullscreen);
         fullscreen.title = T.fullscreen;
+        setText("rf-credits", T.credits);
 
         function cappedDpr() {
           return Math.min(window.devicePixelRatio || 1, MAX_DPR);
@@ -159,13 +164,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/fd341f0ab0052f199cdd900f991ea1fd.data.unityweb",
+          dataUrl: "Build/134627ff9cad2807be67da3df7d89c03.data.unityweb",
           frameworkUrl: "Build/de59ef9d800c90994f672a7bc4b45318.framework.js.unityweb",
           codeUrl: "Build/8a1db280e0c524c16499051979e31a88.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+d40c4e0",
+          productVersion: "1.0+f5d3d97",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr()
         };
