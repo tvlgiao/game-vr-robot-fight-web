@@ -1,134 +1,160 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="vi">
   <head>
     <meta name="robots" content="noindex">
     <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | VR Robot Fight</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <title>VR Robot Fight — bản thử nghiệm</title>
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
+    <canvas id="unity-canvas" tabindex="0" aria-label="VR Robot Fight"></canvas>
+
+    <div id="rf-loading" class="rf-panel" role="status" aria-live="polite">
+      <p class="rf-title">VR Robot Fight</p>
+      <div class="rf-bar" role="progressbar" aria-label="Tiến độ tải" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="rf-bar-fill" class="rf-bar-fill"></div>
       </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">VR Robot Fight</div>
+      <p class="rf-text">Đang tải… <span id="rf-percent">0%</span></p>
+    </div>
+
+    <div id="rf-error" class="rf-panel rf-error" role="alert" hidden>
+      <p class="rf-title">Không tải được trò chơi</p>
+      <p class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
+      <p id="rf-error-detail" class="rf-detail"></p>
+      <button type="button" id="rf-reload" class="rf-button">Tải lại trang</button>
+    </div>
+
+    <div id="rf-touch" class="rf-overlay" role="dialog" aria-modal="true" aria-labelledby="rf-touch-title" hidden>
+      <div class="rf-panel rf-panel-static">
+        <p id="rf-touch-title" class="rf-title">Trò chơi cần bàn phím hoặc tay cầm</p>
+        <p class="rf-text">Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.</p>
+        <button type="button" id="rf-touch-continue" class="rf-button">Vẫn tiếp tục</button>
       </div>
     </div>
+
+    <div id="rf-banner" class="rf-banner" role="status" aria-live="polite" hidden></div>
+
+    <button type="button" id="rf-fullscreen" class="rf-fullscreen" aria-label="Toàn màn hình" title="Toàn màn hình" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <script>
-      var canvas = document.querySelector("#unity-canvas");
+      (function () {
+        var MAX_DPR = 2;
+        var canvas = document.getElementById("unity-canvas");
+        var loading = document.getElementById("rf-loading");
+        var bar = loading.querySelector(".rf-bar");
+        var barFill = document.getElementById("rf-bar-fill");
+        var percent = document.getElementById("rf-percent");
+        var errorPanel = document.getElementById("rf-error");
+        var errorDetail = document.getElementById("rf-error-detail");
+        var banner = document.getElementById("rf-banner");
+        var touch = document.getElementById("rf-touch");
+        var fullscreen = document.getElementById("rf-fullscreen");
+        var instance = null;
+        var failed = false;
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        function cappedDpr() {
+          return Math.min(window.devicePixelRatio || 1, MAX_DPR);
         }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
+
+        function focusGame() {
+          if (instance && touch.hidden && document.activeElement !== canvas) canvas.focus({ preventScroll: true });
         }
-        updateBannerVisibility();
-      }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/66d7d4139c3930b26eb0cfc46260c41a.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/130c04bff7465edce0dffdae1a5fb0ea.data.unityweb",
-        frameworkUrl: buildUrl + "/8ab91e1c68e8502c921c652b212b84bb.framework.js.unityweb",
-        codeUrl: buildUrl + "/3de8569a584a412dd88dc8a6fe820c7e.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Cowork Game Studio",
-        productName: "VR Robot Fight",
-        productVersion: "1.0+ab72edf",
-        showBanner: unityShowBanner,
-        // errorHandler: function(err, url, line) {
-        //    alert("error " + err + " occurred at line " + line);
-        //    // Return 'true' if you handled this error and don't want Unity
-        //    // to process it further, 'false' otherwise.
-        //    return true;
-        // },
-      };
+        function showError(detail) {
+          if (failed) return;
+          failed = true;
+          loading.hidden = true;
+          fullscreen.hidden = true;
+          errorDetail.textContent = detail ? String(detail).slice(0, 300) : "";
+          errorPanel.hidden = false;
+          document.getElementById("rf-reload").focus();
+        }
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+        var bannerTimer = 0;
+        function showBanner(msg, type) {
+          if (type === "error") { showError(msg); return; }
+          banner.textContent = String(msg);
+          banner.hidden = false;
+          clearTimeout(bannerTimer);
+          bannerTimer = setTimeout(function () { banner.hidden = true; }, 5000);
+        }
 
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
+        function hasGamepad() {
+          var pads = navigator.getGamepads ? navigator.getGamepads() : [];
+          for (var i = 0; i < pads.length; i++) if (pads[i] && pads[i].connected) return true;
+          return false;
+        }
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+        function touchOnly() {
+          return window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches;
+        }
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
+        function closeTouch() {
+          if (touch.hidden) return;
+          touch.hidden = true;
+          focusGame();
+        }
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+        if (touchOnly() && !hasGamepad()) {
+          touch.hidden = false;
+          document.getElementById("rf-touch-continue").focus();
+        }
+        document.getElementById("rf-touch-continue").addEventListener("click", closeTouch);
+        window.addEventListener("gamepadconnected", closeTouch);
+        document.getElementById("rf-reload").addEventListener("click", function () { location.reload(); });
 
+        var config = {
+          arguments: [],
+          dataUrl: "Build/a101312bc3daece5a87949123f176917.data.unityweb",
+          frameworkUrl: "Build/5d20d7c339954198085430b3d39be51b.framework.js.unityweb",
+          codeUrl: "Build/636da3e066c5623a669610a9b78a1f89.wasm.unityweb",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "Cowork Game Studio",
+          productName: "VR Robot Fight",
+          productVersion: "1.0+4d580af",
+          showBanner: showBanner,
+          devicePixelRatio: cappedDpr()
+        };
 
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
+        // Unity reads config.devicePixelRatio every frame, so a move to a screen with another ratio keeps the cap.
+        window.addEventListener("resize", function () { config.devicePixelRatio = cappedDpr(); });
 
-      document.querySelector("#unity-loading-bar").style.display = "block";
+        // The page click only moves focus; Unity's own document listeners still see it and unlock audio.
+        document.addEventListener("pointerdown", function (e) {
+          if (e.target === canvas || e.target === document.body) focusGame();
+        });
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+        fullscreen.addEventListener("click", function () {
+          if (instance) instance.SetFullscreen(1);
+          focusGame();
+        });
 
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
+        var script = document.createElement("script");
+        script.src = "Build/2b3c5381de3453d392f5e29309f077b6.loader.js";
+        script.onerror = function () { showError("Không tải được tệp " + script.src); };
+        script.onload = function () {
+          if (typeof createUnityInstance !== "function") { showError("Tệp tải trò chơi bị hỏng."); return; }
+          createUnityInstance(canvas, config, function (progress) {
+            var p = Math.round(progress * 100);
+            barFill.style.transform = "scaleX(" + progress + ")";
+            bar.setAttribute("aria-valuenow", String(p));
+            percent.textContent = p + "%";
+          }).then(function (unityInstance) {
+            if (failed) return;
+            instance = unityInstance;
+            loading.hidden = true;
+            fullscreen.hidden = false;
+            focusGame();
+          }).catch(showError);
+        };
+        document.body.appendChild(script);
+      })();
     </script>
   </body>
 </html>
