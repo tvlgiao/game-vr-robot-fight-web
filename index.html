@@ -17,12 +17,12 @@
       <div class="rf-bar" role="progressbar" aria-label="Tiến độ tải" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="rf-bar-fill" class="rf-bar-fill"></div>
       </div>
-      <p class="rf-text">Đang tải… <span id="rf-percent">0%</span></p>
+      <p class="rf-text"><span id="rf-loading-text">Đang tải…</span> <span id="rf-percent">0%</span></p>
     </div>
 
     <div id="rf-error" class="rf-panel rf-error" role="alert" hidden>
-      <p class="rf-title">Không tải được trò chơi</p>
-      <p class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
+      <p id="rf-error-title" class="rf-title">Không tải được trò chơi</p>
+      <p id="rf-error-text" class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
       <p id="rf-error-detail" class="rf-detail"></p>
       <button type="button" id="rf-reload" class="rf-button">Tải lại trang</button>
     </div>
@@ -30,7 +30,7 @@
     <div id="rf-touch" class="rf-overlay" role="dialog" aria-modal="true" aria-labelledby="rf-touch-title" hidden>
       <div class="rf-panel rf-panel-static">
         <p id="rf-touch-title" class="rf-title">Trò chơi cần bàn phím hoặc tay cầm</p>
-        <p class="rf-text">Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.</p>
+        <p id="rf-touch-text" class="rf-text">Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.</p>
         <button type="button" id="rf-touch-continue" class="rf-button">Vẫn tiếp tục</button>
       </div>
     </div>
@@ -58,6 +58,53 @@
         var fullscreen = document.getElementById("rf-fullscreen");
         var instance = null;
         var failed = false;
+
+        // The in-game language choice is mirrored to localStorage by Plugins/WebGL/DesktopLanguage.jslib; without it the browser language decides.
+        var TEXT = {
+          vi: {
+            loading: "Đang tải…", progress: "Tiến độ tải", errorTitle: "Không tải được trò chơi",
+            errorText: "Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.",
+            reload: "Tải lại trang", touchTitle: "Trò chơi cần bàn phím hoặc tay cầm",
+            touchText: "Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.",
+            touchContinue: "Vẫn tiếp tục", fullscreen: "Toàn màn hình",
+            fileFailed: "Không tải được tệp ", loaderBroken: "Tệp tải trò chơi bị hỏng."
+          },
+          en: {
+            loading: "Loading…", progress: "Loading progress", errorTitle: "The game could not be loaded",
+            errorText: "Reload the page. If it still fails, use a recent Chrome, Edge or Firefox on a computer with WebGL 2 support.",
+            reload: "Reload page", touchTitle: "The game needs a keyboard or a gamepad",
+            touchText: "A touch screen cannot control the fighter. Play on a computer with a keyboard, or connect a gamepad.",
+            touchContinue: "Continue anyway", fullscreen: "Fullscreen",
+            fileFailed: "Could not load the file ", loaderBroken: "The game loader file is corrupted."
+          }
+        };
+
+        function pickLanguage() {
+          try {
+            var stored = window.localStorage.getItem("rf.language");
+            if (stored === "vi" || stored === "en") return stored;
+          } catch (e) { }
+          var nav = "";
+          try { nav = String(navigator.language || ""); } catch (e) { }
+          return /^vi/i.test(nav) ? "vi" : "en";
+        }
+
+        var lang = pickLanguage();
+        var T = TEXT[lang];
+
+        function setText(id, value) { document.getElementById(id).textContent = value; }
+
+        document.documentElement.lang = lang;
+        setText("rf-loading-text", T.loading);
+        bar.setAttribute("aria-label", T.progress);
+        setText("rf-error-title", T.errorTitle);
+        setText("rf-error-text", T.errorText);
+        setText("rf-reload", T.reload);
+        setText("rf-touch-title", T.touchTitle);
+        setText("rf-touch-text", T.touchText);
+        setText("rf-touch-continue", T.touchContinue);
+        fullscreen.setAttribute("aria-label", T.fullscreen);
+        fullscreen.title = T.fullscreen;
 
         function cappedDpr() {
           return Math.min(window.devicePixelRatio || 1, MAX_DPR);
@@ -112,13 +159,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/2f4511be03c7d2854d845680e94b5102.data.unityweb",
-          frameworkUrl: "Build/5d20d7c339954198085430b3d39be51b.framework.js.unityweb",
-          codeUrl: "Build/b2ad7b4b3ed9840ffd2924d49c607f6b.wasm.unityweb",
+          dataUrl: "Build/fd341f0ab0052f199cdd900f991ea1fd.data.unityweb",
+          frameworkUrl: "Build/de59ef9d800c90994f672a7bc4b45318.framework.js.unityweb",
+          codeUrl: "Build/8a1db280e0c524c16499051979e31a88.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+dcd7032",
+          productVersion: "1.0+d40c4e0",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr()
         };
@@ -137,10 +184,10 @@
         });
 
         var script = document.createElement("script");
-        script.src = "Build/e80085dfc8573ba68c4484959aa54cad.loader.js";
-        script.onerror = function () { showError("Không tải được tệp " + script.src); };
+        script.src = "Build/9c4944f9378e1a15af37dceb0f9cae2b.loader.js";
+        script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
-          if (typeof createUnityInstance !== "function") { showError("Tệp tải trò chơi bị hỏng."); return; }
+          if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
           createUnityInstance(canvas, config, function (progress) {
             var p = Math.round(progress * 100);
             barFill.style.transform = "scaleX(" + progress + ")";
