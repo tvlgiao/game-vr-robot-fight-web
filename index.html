@@ -5,30 +5,52 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="dark">
-    <title>VR Robot Fight — bản thử nghiệm</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314171f'/%3E%3Ccircle cx='16' cy='17' r='9' fill='%23c62828'/%3E%3Crect x='10' y='8' width='12' height='5' rx='2' fill='%23c62828'/%3E%3C/svg%3E">
+    <meta name="theme-color" content="#0B0E14">
+    <title>VR Robot Fight — đấm bốc với robot ngay trên trình duyệt</title>
+    <meta id="rf-meta-description" name="description" content="Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VR Robot Fight">
+    <meta id="rf-og-title" property="og:title" content="VR Robot Fight">
+    <meta id="rf-og-description" property="og:description" content="Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.">
+    <meta id="rf-og-locale" property="og:locale" content="vi_VN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0E14'/%3E%3Crect x='7' y='9' width='18' height='13' rx='6' fill='%23FFC23A'/%3E%3Crect x='10' y='21' width='12' height='5' rx='2' fill='%23FFC23A'/%3E%3Crect x='11' y='13' width='10' height='2.5' rx='1.25' fill='%230B0E14'/%3E%3C/svg%3E">
+    <link rel="preload" href="TemplateData/BeVietnamPro-SemiBold.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
     <canvas id="unity-canvas" tabindex="0" aria-label="VR Robot Fight"></canvas>
 
-    <div id="rf-loading" class="rf-panel" role="status" aria-live="polite">
-      <p class="rf-title">VR Robot Fight</p>
+    <div id="rf-loading" class="rf-screen" role="status" aria-live="polite">
+      <div class="rf-brand">
+        <p class="rf-tag">VR</p>
+        <p class="rf-wordmark">ROBOT FIGHT</p>
+        <span class="rf-stripe" aria-hidden="true"></span>
+        <p id="rf-tagline" class="rf-tagline">Đấm bốc với robot ngay trên trình duyệt</p>
+      </div>
       <div class="rf-bar" role="progressbar" aria-label="Tiến độ tải" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="rf-bar-fill" class="rf-bar-fill"></div>
       </div>
       <p class="rf-text"><span id="rf-loading-text">Đang tải…</span> <span id="rf-percent">0%</span></p>
     </div>
 
-    <div id="rf-error" class="rf-panel rf-error" role="alert" hidden>
-      <p id="rf-error-title" class="rf-title">Không tải được trò chơi</p>
-      <p id="rf-error-text" class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
-      <p id="rf-error-detail" class="rf-detail"></p>
-      <button type="button" id="rf-reload" class="rf-button">Tải lại trang</button>
+    <div id="rf-error" class="rf-screen" role="alert" hidden>
+      <div class="rf-brand rf-brand-small" aria-hidden="true">
+        <p class="rf-tag">VR</p>
+        <p class="rf-wordmark">ROBOT FIGHT</p>
+        <span class="rf-stripe"></span>
+      </div>
+      <div class="rf-panel">
+        <p id="rf-error-title" class="rf-title rf-title-error">Không tải được trò chơi</p>
+        <p id="rf-error-text" class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
+        <p id="rf-error-detail" class="rf-detail"></p>
+        <button type="button" id="rf-reload" class="rf-button">Tải lại trang</button>
+      </div>
     </div>
 
     <div id="rf-touch" class="rf-overlay" role="dialog" aria-modal="true" aria-labelledby="rf-touch-title" hidden>
-      <div class="rf-panel rf-panel-static">
+      <div class="rf-panel">
         <p id="rf-touch-title" class="rf-title">Trò chơi cần bàn phím hoặc tay cầm</p>
         <p id="rf-touch-text" class="rf-text">Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.</p>
         <button type="button" id="rf-touch-continue" class="rf-button">Vẫn tiếp tục</button>
@@ -61,23 +83,33 @@
         var instance = null;
         var failed = false;
 
-        // The in-game language choice is mirrored to localStorage by Plugins/WebGL/DesktopLanguage.jslib; without it the browser language decides.
+        // Plugins/WebGL/DesktopLanguage.jslib mirrors the in-game language to localStorage and calls RobotFightPage.setLanguage; without a stored one the browser language decides, as it does in the game.
         var TEXT = {
           vi: {
+            title: "VR Robot Fight — đấm bốc với robot ngay trên trình duyệt",
+            description: "Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.",
+            locale: "vi_VN", tagline: "Đấm bốc với robot ngay trên trình duyệt",
             loading: "Đang tải…", progress: "Tiến độ tải", errorTitle: "Không tải được trò chơi",
             errorText: "Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.",
+            noWebglTitle: "Trình duyệt này chưa chạy được trò chơi",
+            noWebglText: "Trò chơi cần WebGL 2. Hãy mở trang bằng Chrome, Edge hoặc Firefox bản mới trên máy tính, và bật tăng tốc phần cứng trong cài đặt trình duyệt.",
             reload: "Tải lại trang", touchTitle: "Trò chơi cần bàn phím hoặc tay cầm",
             touchText: "Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.",
-            touchContinue: "Vẫn tiếp tục", fullscreen: "Toàn màn hình",
+            touchContinue: "Vẫn tiếp tục", fullscreen: "Toàn màn hình", fullscreenFailed: "Trình duyệt không cho bật toàn màn hình.",
             credits: "Ghi công",
             fileFailed: "Không tải được tệp ", loaderBroken: "Tệp tải trò chơi bị hỏng."
           },
           en: {
+            title: "VR Robot Fight — robot boxing in your browser",
+            description: "Robot boxing in your browser: throw straights and hooks, slip and guard with a keyboard or a gamepad. A free preview.",
+            locale: "en_US", tagline: "Robot boxing in your browser",
             loading: "Loading…", progress: "Loading progress", errorTitle: "The game could not be loaded",
             errorText: "Reload the page. If it still fails, use a recent Chrome, Edge or Firefox on a computer with WebGL 2 support.",
+            noWebglTitle: "This browser cannot run the game yet",
+            noWebglText: "The game needs WebGL 2. Open the page in a recent Chrome, Edge or Firefox on a computer, and turn on hardware acceleration in the browser settings.",
             reload: "Reload page", touchTitle: "The game needs a keyboard or a gamepad",
             touchText: "A touch screen cannot control the fighter. Play on a computer with a keyboard, or connect a gamepad.",
-            touchContinue: "Continue anyway", fullscreen: "Fullscreen",
+            touchContinue: "Continue anyway", fullscreen: "Fullscreen", fullscreenFailed: "The browser did not allow fullscreen.",
             credits: "Credits",
             fileFailed: "Could not load the file ", loaderBroken: "The game loader file is corrupted."
           }
@@ -93,23 +125,36 @@
           return /^vi/i.test(nav) ? "vi" : "en";
         }
 
-        var lang = pickLanguage();
-        var T = TEXT[lang];
+        var T = TEXT.vi;
+        var errorKind = "load";
 
         function setText(id, value) { document.getElementById(id).textContent = value; }
+        function setContent(id, value) { document.getElementById(id).setAttribute("content", value); }
 
-        document.documentElement.lang = lang;
-        setText("rf-loading-text", T.loading);
-        bar.setAttribute("aria-label", T.progress);
-        setText("rf-error-title", T.errorTitle);
-        setText("rf-error-text", T.errorText);
-        setText("rf-reload", T.reload);
-        setText("rf-touch-title", T.touchTitle);
-        setText("rf-touch-text", T.touchText);
-        setText("rf-touch-continue", T.touchContinue);
-        fullscreen.setAttribute("aria-label", T.fullscreen);
-        fullscreen.title = T.fullscreen;
-        setText("rf-credits", T.credits);
+        function applyLanguage(code) {
+          if (!TEXT[code]) return;
+          T = TEXT[code];
+          document.documentElement.lang = code;
+          document.title = T.title;
+          setContent("rf-meta-description", T.description);
+          setContent("rf-og-description", T.description);
+          setContent("rf-og-locale", T.locale);
+          setText("rf-tagline", T.tagline);
+          setText("rf-loading-text", T.loading);
+          bar.setAttribute("aria-label", T.progress);
+          setText("rf-error-title", errorKind === "webgl" ? T.noWebglTitle : T.errorTitle);
+          setText("rf-error-text", errorKind === "webgl" ? T.noWebglText : T.errorText);
+          setText("rf-reload", T.reload);
+          setText("rf-touch-title", T.touchTitle);
+          setText("rf-touch-text", T.touchText);
+          setText("rf-touch-continue", T.touchContinue);
+          fullscreen.setAttribute("aria-label", T.fullscreen);
+          fullscreen.title = T.fullscreen;
+          setText("rf-credits", T.credits);
+        }
+
+        window.RobotFightPage = { setLanguage: applyLanguage };
+        applyLanguage(pickLanguage());
 
         function cappedDpr() {
           return Math.min(window.devicePixelRatio || 1, MAX_DPR);
@@ -119,11 +164,16 @@
           if (instance && touch.hidden && document.activeElement !== canvas) canvas.focus({ preventScroll: true });
         }
 
-        function showError(detail) {
+        function showError(detail, kind) {
           if (failed) return;
           failed = true;
+          errorKind = kind || "load";
           loading.hidden = true;
           fullscreen.hidden = true;
+          touch.hidden = true;
+          canvas.hidden = true;
+          setText("rf-error-title", errorKind === "webgl" ? T.noWebglTitle : T.errorTitle);
+          setText("rf-error-text", errorKind === "webgl" ? T.noWebglText : T.errorText);
           errorDetail.textContent = detail ? String(detail).slice(0, 300) : "";
           errorPanel.hidden = false;
           document.getElementById("rf-reload").focus();
@@ -148,10 +198,30 @@
           return window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches;
         }
 
+        function hasWebgl2() {
+          try {
+            var probe = document.createElement("canvas");
+            var gl = probe.getContext("webgl2");
+            if (!gl) return false;
+            var lose = gl.getExtension("WEBGL_lose_context");
+            if (lose) lose.loseContext();
+            return true;
+          } catch (e) {
+            return false;
+          }
+        }
+
         function closeTouch() {
           if (touch.hidden) return;
           touch.hidden = true;
           focusGame();
+        }
+
+        document.getElementById("rf-reload").addEventListener("click", function () { location.reload(); });
+
+        if (!hasWebgl2()) {
+          showError("", "webgl");
+          return;
         }
 
         if (touchOnly() && !hasGamepad()) {
@@ -160,17 +230,16 @@
         }
         document.getElementById("rf-touch-continue").addEventListener("click", closeTouch);
         window.addEventListener("gamepadconnected", closeTouch);
-        document.getElementById("rf-reload").addEventListener("click", function () { location.reload(); });
 
         var config = {
           arguments: [],
-          dataUrl: "Build/5bf00806fbdb26ee76a5eae7154935e3.data.unityweb",
-          frameworkUrl: "Build/ddb8c36bd203ff7d5981ea12c8e20a3c.framework.js.unityweb",
-          codeUrl: "Build/a3d1a482333571878f7f9c0d5ca4487d.wasm.unityweb",
+          dataUrl: "Build/a89a761acee9c4dbe54b1c568baab636.data.unityweb",
+          frameworkUrl: "Build/b9ac18c6478c5e86ce1c045205a177e5.framework.js.unityweb",
+          codeUrl: "Build/e9ea7b267be13b583f63ce5d8b2b70b8.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+38d7a73",
+          productVersion: "1.0+d644ec3",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr()
         };
@@ -183,28 +252,53 @@
           if (e.target === canvas || e.target === document.body) focusGame();
         });
 
-        fullscreen.addEventListener("click", function () {
-          if (instance) instance.SetFullscreen(1);
-          focusGame();
-        });
+        // The page goes fullscreen itself (the canvas fills the window), so a refused request (no user gesture, iframe policy) is caught and named instead of an unhandled rejection.
+        function toggleFullscreen() {
+          var root = document.documentElement;
+          var request;
+          try {
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+              request = document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen && document.webkitExitFullscreen();
+            } else {
+              request = root.requestFullscreen ? root.requestFullscreen({ navigationUI: "hide" }) : root.webkitRequestFullscreen && root.webkitRequestFullscreen();
+            }
+          } catch (e) {
+            showBanner(T.fullscreenFailed);
+            return;
+          }
+          if (request && typeof request.then === "function") {
+            request.then(focusGame, function () { showBanner(T.fullscreenFailed); });
+          } else {
+            focusGame();
+          }
+        }
+
+        fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/7bf5baf7dc1778822fe3bff98f95c5ce.loader.js";
+        script.src = "Build/d124b0ec56be4a663c7ae7a7e5c4d1d4.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
-          createUnityInstance(canvas, config, function (progress) {
-            var p = Math.round(progress * 100);
-            barFill.style.transform = "scaleX(" + progress + ")";
-            bar.setAttribute("aria-valuenow", String(p));
-            percent.textContent = p + "%";
-          }).then(function (unityInstance) {
+          var started;
+          try {
+            started = createUnityInstance(canvas, config, function (progress) {
+              var p = Math.round(progress * 100);
+              barFill.style.transform = "scaleX(" + progress + ")";
+              bar.setAttribute("aria-valuenow", String(p));
+              percent.textContent = p + "%";
+            });
+          } catch (e) {
+            showError(e && e.message ? e.message : e);
+            return;
+          }
+          started.then(function (unityInstance) {
             if (failed) return;
             instance = unityInstance;
             loading.hidden = true;
             fullscreen.hidden = false;
             focusGame();
-          }).catch(showError);
+          }).catch(function (e) { showError(e && e.message ? e.message : e); });
         };
         document.body.appendChild(script);
       })();

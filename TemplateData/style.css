@@ -1,16 +1,28 @@
+@font-face {
+  font-family: "Be Vietnam Pro";
+  src: url("BeVietnamPro-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --rf-bg: #14171f;
-  --rf-panel: rgba(20, 23, 31, 0.92);
-  --rf-text: #e8ebf2;
-  --rf-muted: #9aa3b5;
-  --rf-accent: #f2a03d;
-  --rf-error: #ff7b6b;
-  --rf-track: rgba(255, 255, 255, 0.14);
-  --rf-border: rgba(255, 255, 255, 0.16);
-  --rf-focus: #ffd38a;
-  --rf-radius: 0.5rem;
+  --rf-bg-top: #0B0E14;
+  --rf-bg-bottom: #151A24;
+  --rf-panel: rgba(13, 15, 21, 0.92);
+  --rf-text: #F2F4F8;
+  --rf-muted: #A8B0BE;
+  --rf-gold: #FFC23A;
+  --rf-on-gold: #14120C;
+  --rf-error: #FF7B6B;
+  --rf-track: rgba(255, 255, 255, 0.12);
+  --rf-border: rgba(255, 194, 58, 0.45);
+  --rf-hairline: rgba(255, 255, 255, 0.16);
+  --rf-focus: #FFE3A3;
+  --rf-radius: 0.75rem;
   --rf-gap: 1rem;
-  --rf-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rf-font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rf-wordmark-size: clamp(2.5rem, 8vw, 5.5rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -21,7 +33,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--rf-bg);
+  background: linear-gradient(180deg, var(--rf-bg-top) 0%, var(--rf-bg-bottom) 100%) fixed;
+  background-color: var(--rf-bg-top);
   color: var(--rf-text);
   font-family: var(--rf-font);
 }
@@ -34,16 +47,68 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
-  background: var(--rf-bg);
+  background: transparent;
   outline: none;
 }
 
-.rf-panel {
+.rf-screen {
   position: fixed;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  transform: translate(-50%, -50%);
-  width: min(28rem, calc(100% - 2rem));
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: linear-gradient(180deg, var(--rf-bg-top) 0%, var(--rf-bg-bottom) 100%);
+  text-align: center;
+  z-index: 1;
+}
+
+.rf-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rf-tag {
+  margin: 0;
+  color: var(--rf-gold);
+  font-size: calc(var(--rf-wordmark-size) * 0.36);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  line-height: 1.1;
+}
+
+.rf-wordmark {
+  margin: 0;
+  font-size: var(--rf-wordmark-size);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  -webkit-text-stroke: 0.035em currentColor;
+  text-shadow: 0 0.06em 0.12em rgba(0, 0, 0, 0.55);
+}
+
+.rf-stripe {
+  display: block;
+  width: calc(var(--rf-wordmark-size) * 2.4);
+  height: max(3px, calc(var(--rf-wordmark-size) * 0.06));
+  margin-block: calc(var(--rf-wordmark-size) * 0.22);
+  border-radius: 999px;
+  background: var(--rf-gold);
+}
+
+.rf-tagline {
+  margin: 0;
+  color: var(--rf-muted);
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+}
+
+.rf-brand-small { --rf-wordmark-size: clamp(2rem, 5vw, 3.25rem); }
+
+.rf-panel {
+  width: min(30rem, 100%);
   padding: 1.5rem;
   border: 1px solid var(--rf-border);
   border-radius: var(--rf-radius);
@@ -51,17 +116,13 @@ html, body {
   text-align: center;
 }
 
-.rf-panel-static {
-  position: static;
-  transform: none;
-  margin: auto;
-}
-
 .rf-title {
   margin: 0 0 var(--rf-gap);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
+
+.rf-title-error { color: var(--rf-gold); }
 
 .rf-text {
   margin: 0;
@@ -70,8 +131,9 @@ html, body {
 }
 
 .rf-bar {
+  width: min(24rem, 100%);
   height: 0.5rem;
-  margin-block-end: 0.75rem;
+  margin-block-end: -1.25rem;
   border-radius: 999px;
   background: var(--rf-track);
   overflow: hidden;
@@ -80,15 +142,14 @@ html, body {
 .rf-bar-fill {
   width: 100%;
   height: 100%;
-  background: var(--rf-accent);
+  border-radius: inherit;
+  background: var(--rf-gold);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.2s ease-out;
 }
 
 [dir="rtl"] .rf-bar-fill { transform-origin: right center; }
-
-.rf-error .rf-title { color: var(--rf-error); }
 
 .rf-detail {
   margin: 0.75rem 0 0;
@@ -103,13 +164,13 @@ html, body {
   min-width: 44px;
   min-height: 44px;
   margin-block-start: 1.25rem;
-  padding: 0.625rem 1.25rem;
+  padding: 0.625rem 1.5rem;
   border: 0;
   border-radius: var(--rf-radius);
-  background: var(--rf-accent);
-  color: var(--rf-bg);
+  background: var(--rf-gold);
+  color: var(--rf-on-gold);
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -117,8 +178,10 @@ html, body {
   position: fixed;
   inset: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1rem;
-  background: rgba(10, 12, 17, 0.8);
+  background: rgba(11, 14, 20, 0.85);
   z-index: 2;
 }
 
@@ -130,11 +193,12 @@ html, body {
   max-width: calc(100% - 2rem);
   margin-inline: auto;
   padding: 0.5rem 1rem;
+  border: 1px solid var(--rf-border);
   border-radius: var(--rf-radius);
   background: var(--rf-panel);
   color: var(--rf-text);
   font-size: 0.875rem;
-  z-index: 1;
+  z-index: 3;
 }
 
 .rf-fullscreen {
@@ -146,9 +210,9 @@ html, body {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--rf-border);
+  border: 1px solid var(--rf-hairline);
   border-radius: var(--rf-radius);
-  background: rgba(20, 23, 31, 0.45);
+  background: rgba(13, 15, 21, 0.45);
   color: var(--rf-text);
   opacity: 0.45;
   cursor: pointer;
@@ -168,7 +232,7 @@ html, body {
   color: var(--rf-text);
   font-size: 0.75rem;
   opacity: 0.45;
-  z-index: 1;
+  z-index: 2;
 }
 
 .rf-credits:hover, .rf-credits:focus-visible { opacity: 1; }
@@ -186,8 +250,14 @@ html, body {
 
 @media (prefers-contrast: more) {
   :root {
-    --rf-muted: #d4d9e3;
-    --rf-border: rgba(255, 255, 255, 0.6);
+    --rf-muted: #D4D9E3;
+    --rf-hairline: rgba(255, 255, 255, 0.6);
+    --rf-border: var(--rf-gold);
   }
   .rf-fullscreen, .rf-credits { opacity: 1; }
+}
+
+@media (max-height: 480px) {
+  .rf-screen { gap: 1rem; }
+  :root { --rf-wordmark-size: clamp(2rem, 6vw, 3rem); }
 }
