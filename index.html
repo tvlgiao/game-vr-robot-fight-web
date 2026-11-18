@@ -151,6 +151,7 @@
           fullscreen.setAttribute("aria-label", T.fullscreen);
           fullscreen.title = T.fullscreen;
           setText("rf-credits", T.credits);
+          document.getElementById("rf-credits").setAttribute("href", code === "en" ? "credits.html#en" : "credits.html");
         }
 
         window.RobotFightPage = { setLanguage: applyLanguage };
@@ -233,13 +234,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/38f6908d3fc9029606fe0e036b81dcad.data.unityweb",
-          frameworkUrl: "Build/85f8d71482a3c648738f53e346c19abc.framework.js.unityweb",
-          codeUrl: "Build/e7af9c184159ab502647b48119558709.wasm.unityweb",
+          dataUrl: "Build/5e5feb04f4573a9e60fe29163e4fc646.data.unityweb",
+          frameworkUrl: "Build/2c020a210a6b6d6af721dfdfa06a96fe.framework.js.unityweb",
+          codeUrl: "Build/28b629857b01f991c0fc4b81373c9688.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+7d6aa41",
+          productVersion: "1.0+79429d0",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr()
         };
@@ -276,7 +277,7 @@
         fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/7c70e298eaea1368df2d884f798691e9.loader.js";
+        script.src = "Build/e26e877743e6d28affbdea61bdceb9e1.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
