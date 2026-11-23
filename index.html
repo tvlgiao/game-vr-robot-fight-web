@@ -65,7 +65,7 @@
       </svg>
     </button>
 
-    <a id="rf-credits" class="rf-credits" href="credits.html">Ghi công</a>
+    <a id="rf-credits" class="rf-credits" href="credits.html" target="_blank" rel="noopener">Ghi công</a>
 
     <script>
       (function () {
@@ -234,15 +234,16 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/889ab9b26b14d16948f86147de7aa973.data.unityweb",
-          frameworkUrl: "Build/2122f96a8bf404c84709a7495e685d73.framework.js.unityweb",
-          codeUrl: "Build/de36d4bdd829bee177f60a74075f7985.wasm.unityweb",
+          dataUrl: "Build/d3ad3f773f4d3ae38f4c2401124e17cf.data.unityweb",
+          frameworkUrl: "Build/0a0473a3ee1e43b5fe917a283956dfa3.framework.js.unityweb",
+          codeUrl: "Build/fb81941b7d4ce70db1c866a91abbdf14.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+be3819cc",
+          productVersion: "1.0+6eb93428",
           showBanner: showBanner,
-          devicePixelRatio: cappedDpr()
+          devicePixelRatio: cappedDpr(),
+          autoSyncPersistentDataPath: true
         };
 
         // Unity reads config.devicePixelRatio every frame, so a move to a screen with another ratio keeps the cap.
@@ -277,7 +278,7 @@
         fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/be6d5c4912893311e5caa4a253dac21e.loader.js";
+        script.src = "Build/f89c2af41cf953464e2409763d4584bb.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
