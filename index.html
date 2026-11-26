@@ -234,13 +234,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/41884cafb6195962b9e4f3af3c152364.data.unityweb",
-          frameworkUrl: "Build/e03360ce9a012d038f08b99c921c393c.framework.js.unityweb",
-          codeUrl: "Build/a0c026968b99c9451576f2a45808c098.wasm.unityweb",
+          dataUrl: "Build/b3d9f22d820961d001ae25a41bd7c183.data.unityweb",
+          frameworkUrl: "Build/a75986872c1b48faf3d0a0c7ce469fa7.framework.js.unityweb",
+          codeUrl: "Build/1e77d35bb0117741cb4029a9df56c404.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "VR Robot Fight",
-          productVersion: "1.0+453e55de",
+          productVersion: "1.0+8901e64b",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr(),
           autoSyncPersistentDataPath: true
@@ -278,7 +278,7 @@
         fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/e7f734342bac96969c9cff3ce843d2ad.loader.js";
+        script.src = "Build/32cbdca128d03593158af4205f187506.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
