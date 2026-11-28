@@ -27,7 +27,7 @@
         <p class="rf-wordmark">IRON JAB</p>
         <p class="rf-tag">ROBOT BOXING</p>
         <span class="rf-stripe" aria-hidden="true"></span>
-        <p id="rf-tagline" class="rf-tagline">Robot boxing in your browser</p>
+        <p id="rf-tagline" class="rf-tagline">Box a robot that fights back</p>
       </div>
       <div class="rf-bar" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="rf-bar-fill" class="rf-bar-fill"></div>
@@ -88,7 +88,7 @@
           vi: {
             title: "Iron Jab: Robot Boxing — chơi ngay trên trình duyệt",
             description: "Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.",
-            locale: "vi_VN", tagline: "Đấm bốc với robot ngay trên trình duyệt",
+            locale: "vi_VN", tagline: "Đấm bốc với robot biết đánh trả",
             loading: "Đang tải…", progress: "Tiến độ tải", errorTitle: "Không tải được trò chơi",
             errorText: "Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.",
             noWebglTitle: "Trình duyệt này chưa chạy được trò chơi",
@@ -102,7 +102,7 @@
           en: {
             title: "Iron Jab: Robot Boxing — play in your browser",
             description: "Robot boxing in your browser: throw straights and hooks, slip and guard with a keyboard or a gamepad. A free preview.",
-            locale: "en_US", tagline: "Robot boxing in your browser",
+            locale: "en_US", tagline: "Box a robot that fights back",
             loading: "Loading…", progress: "Loading progress", errorTitle: "The game could not be loaded",
             errorText: "Reload the page. If it still fails, use a recent Chrome, Edge or Firefox on a computer with WebGL 2 support.",
             noWebglTitle: "This browser cannot run the game yet",
@@ -234,13 +234,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/b3f53d52736092a2c057a32319dca315.data.unityweb",
-          frameworkUrl: "Build/ba0a606e01091d14213112f95680ca68.framework.js.unityweb",
-          codeUrl: "Build/48c258b7d19c6f22058e3d0df7ca1c1b.wasm.unityweb",
+          dataUrl: "Build/a53df8da2d470192c6b8f4d109299186.data.unityweb",
+          frameworkUrl: "Build/b7faedf835baaa2f18d86876d2be69b1.framework.js.unityweb",
+          codeUrl: "Build/622f0a4f5586fd544025de2523c78084.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
           productName: "Iron Jab: Robot Boxing",
-          productVersion: "1.0+88352585",
+          productVersion: "1.0+9a56a183",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr(),
           autoSyncPersistentDataPath: true
@@ -278,7 +278,7 @@
         fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/7b125a63fd3db896dc943d6ed1c08ab3.loader.js";
+        script.src = "Build/e4a8e2ef3a77a4fcf2b955b738062953.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
