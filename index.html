@@ -1,71 +1,71 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta name="robots" content="noindex">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#0B0E14">
-    <title>VR Robot Fight — đấm bốc với robot ngay trên trình duyệt</title>
-    <meta id="rf-meta-description" name="description" content="Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.">
+    <title>Iron Jab: Robot Boxing — play in your browser</title>
+    <meta id="rf-meta-description" name="description" content="Robot boxing in your browser: throw straights and hooks, slip and guard with a keyboard or a gamepad. A free preview.">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="VR Robot Fight">
-    <meta id="rf-og-title" property="og:title" content="VR Robot Fight">
-    <meta id="rf-og-description" property="og:description" content="Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.">
-    <meta id="rf-og-locale" property="og:locale" content="vi_VN">
-    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:site_name" content="Iron Jab: Robot Boxing">
+    <meta id="rf-og-title" property="og:title" content="Iron Jab: Robot Boxing">
+    <meta id="rf-og-description" property="og:description" content="Robot boxing in your browser: throw straights and hooks, slip and guard with a keyboard or a gamepad. A free preview.">
+    <meta id="rf-og-locale" property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="vi_VN">
     <meta name="twitter:card" content="summary">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0E14'/%3E%3Crect x='7' y='9' width='18' height='13' rx='6' fill='%23FFC23A'/%3E%3Crect x='10' y='21' width='12' height='5' rx='2' fill='%23FFC23A'/%3E%3Crect x='11' y='13' width='10' height='2.5' rx='1.25' fill='%230B0E14'/%3E%3C/svg%3E">
     <link rel="preload" href="TemplateData/BeVietnamPro-SemiBold.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
-    <canvas id="unity-canvas" tabindex="0" aria-label="VR Robot Fight"></canvas>
+    <canvas id="unity-canvas" tabindex="0" aria-label="Iron Jab: Robot Boxing"></canvas>
 
     <div id="rf-loading" class="rf-screen" role="status" aria-live="polite">
       <div class="rf-brand">
-        <p class="rf-tag">VR</p>
-        <p class="rf-wordmark">ROBOT FIGHT</p>
+        <p class="rf-wordmark">IRON JAB</p>
+        <p class="rf-tag">ROBOT BOXING</p>
         <span class="rf-stripe" aria-hidden="true"></span>
-        <p id="rf-tagline" class="rf-tagline">Đấm bốc với robot ngay trên trình duyệt</p>
+        <p id="rf-tagline" class="rf-tagline">Robot boxing in your browser</p>
       </div>
-      <div class="rf-bar" role="progressbar" aria-label="Tiến độ tải" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="rf-bar" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="rf-bar-fill" class="rf-bar-fill"></div>
       </div>
-      <p class="rf-text"><span id="rf-loading-text">Đang tải…</span> <span id="rf-percent">0%</span></p>
+      <p class="rf-text"><span id="rf-loading-text">Loading…</span> <span id="rf-percent">0%</span></p>
     </div>
 
     <div id="rf-error" class="rf-screen" role="alert" hidden>
       <div class="rf-brand rf-brand-small" aria-hidden="true">
-        <p class="rf-tag">VR</p>
-        <p class="rf-wordmark">ROBOT FIGHT</p>
+        <p class="rf-wordmark">IRON JAB</p>
+        <p class="rf-tag">ROBOT BOXING</p>
         <span class="rf-stripe"></span>
       </div>
       <div class="rf-panel">
-        <p id="rf-error-title" class="rf-title rf-title-error">Không tải được trò chơi</p>
-        <p id="rf-error-text" class="rf-text">Hãy tải lại trang. Nếu vẫn lỗi, hãy dùng Chrome, Edge hoặc Firefox bản mới trên máy tính có hỗ trợ WebGL 2.</p>
+        <p id="rf-error-title" class="rf-title rf-title-error">The game could not be loaded</p>
+        <p id="rf-error-text" class="rf-text">Reload the page. If it still fails, use a recent Chrome, Edge or Firefox on a computer with WebGL 2 support.</p>
         <p id="rf-error-detail" class="rf-detail"></p>
-        <button type="button" id="rf-reload" class="rf-button">Tải lại trang</button>
+        <button type="button" id="rf-reload" class="rf-button">Reload page</button>
       </div>
     </div>
 
     <div id="rf-touch" class="rf-overlay" role="dialog" aria-modal="true" aria-labelledby="rf-touch-title" hidden>
       <div class="rf-panel">
-        <p id="rf-touch-title" class="rf-title">Trò chơi cần bàn phím hoặc tay cầm</p>
-        <p id="rf-touch-text" class="rf-text">Thiết bị cảm ứng không điều khiển được võ sĩ. Hãy chơi trên máy tính có bàn phím, hoặc kết nối tay cầm.</p>
-        <button type="button" id="rf-touch-continue" class="rf-button">Vẫn tiếp tục</button>
+        <p id="rf-touch-title" class="rf-title">The game needs a keyboard or a gamepad</p>
+        <p id="rf-touch-text" class="rf-text">A touch screen cannot control the fighter. Play on a computer with a keyboard, or connect a gamepad.</p>
+        <button type="button" id="rf-touch-continue" class="rf-button">Continue anyway</button>
       </div>
     </div>
 
     <div id="rf-banner" class="rf-banner" role="status" aria-live="polite" hidden></div>
 
-    <button type="button" id="rf-fullscreen" class="rf-fullscreen" aria-label="Toàn màn hình" title="Toàn màn hình" hidden>
+    <button type="button" id="rf-fullscreen" class="rf-fullscreen" aria-label="Fullscreen" title="Fullscreen" hidden>
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
         <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
 
-    <a id="rf-credits" class="rf-credits" href="credits.html" target="_blank" rel="noopener">Ghi công</a>
+    <a id="rf-credits" class="rf-credits" href="credits.html#en" target="_blank" rel="noopener">Credits</a>
 
     <script>
       (function () {
@@ -86,7 +86,7 @@
         // Plugins/WebGL/DesktopLanguage.jslib mirrors the in-game language to localStorage and calls RobotFightPage.setLanguage; without a stored one the browser language decides, as it does in the game.
         var TEXT = {
           vi: {
-            title: "VR Robot Fight — đấm bốc với robot ngay trên trình duyệt",
+            title: "Iron Jab: Robot Boxing — chơi ngay trên trình duyệt",
             description: "Đấm bốc với robot ngay trên trình duyệt: đấm thẳng, móc, né và thủ bằng bàn phím hoặc tay cầm. Bản thử nghiệm miễn phí.",
             locale: "vi_VN", tagline: "Đấm bốc với robot ngay trên trình duyệt",
             loading: "Đang tải…", progress: "Tiến độ tải", errorTitle: "Không tải được trò chơi",
@@ -100,7 +100,7 @@
             fileFailed: "Không tải được tệp ", loaderBroken: "Tệp tải trò chơi bị hỏng."
           },
           en: {
-            title: "VR Robot Fight — robot boxing in your browser",
+            title: "Iron Jab: Robot Boxing — play in your browser",
             description: "Robot boxing in your browser: throw straights and hooks, slip and guard with a keyboard or a gamepad. A free preview.",
             locale: "en_US", tagline: "Robot boxing in your browser",
             loading: "Loading…", progress: "Loading progress", errorTitle: "The game could not be loaded",
@@ -125,7 +125,7 @@
           return /^vi/i.test(nav) ? "vi" : "en";
         }
 
-        var T = TEXT.vi;
+        var T = TEXT.en;
         var errorKind = "load";
 
         function setText(id, value) { document.getElementById(id).textContent = value; }
@@ -234,13 +234,13 @@
 
         var config = {
           arguments: [],
-          dataUrl: "Build/b83e50ee185303ee9187863f35d2bc77.data.unityweb",
+          dataUrl: "Build/b3f53d52736092a2c057a32319dca315.data.unityweb",
           frameworkUrl: "Build/ba0a606e01091d14213112f95680ca68.framework.js.unityweb",
-          codeUrl: "Build/5c437062599bfbe710e2e775336f47c2.wasm.unityweb",
+          codeUrl: "Build/48c258b7d19c6f22058e3d0df7ca1c1b.wasm.unityweb",
           streamingAssetsUrl: "StreamingAssets",
           companyName: "Cowork Game Studio",
-          productName: "VR Robot Fight",
-          productVersion: "1.0+b6ca39aa",
+          productName: "Iron Jab: Robot Boxing",
+          productVersion: "1.0+88352585",
           showBanner: showBanner,
           devicePixelRatio: cappedDpr(),
           autoSyncPersistentDataPath: true
@@ -278,7 +278,7 @@
         fullscreen.addEventListener("click", toggleFullscreen);
 
         var script = document.createElement("script");
-        script.src = "Build/4bec7734b501cce28141d00ad9910c87.loader.js";
+        script.src = "Build/7b125a63fd3db896dc943d6ed1c08ab3.loader.js";
         script.onerror = function () { showError(T.fileFailed + script.src); };
         script.onload = function () {
           if (typeof createUnityInstance !== "function") { showError(T.loaderBroken); return; }
